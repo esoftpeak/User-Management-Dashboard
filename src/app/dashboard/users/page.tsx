@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { getUsers } from "@/services/users";
+import { getAllUsers } from "@/services/users";
 import { ApiErrorState } from "@/components/users/api-error-state";
 import { UsersTable } from "@/components/users/users-table";
 
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function UsersPage() {
-  const data = await getUsers({ limit: 100 }).catch(() => null);
+  const data = await getAllUsers({ batchSize: 100 }).catch(() => null);
   if (!data) {
     return <ApiErrorState />;
   }

@@ -34,6 +34,28 @@ export async function getUsers(params?: { limit?: number; skip?: number }) {
   return await requestJson<DummyJsonListResponse<User>>(url.toString());
 }
 
+/**
+ * DummyJSON paginates users; use this helper when you need the full dataset.
+ */
+export async function getAllUsers(params?: { batchSize?: number }) {
+  const batchSize = Math.max(1, Math.min(params?.batchSize ?? 100, 100));
+
+  const first = await getUsers({ limit: batchSize, skip: 0 });
+  const total = Number(first.total) || first.users.length;
+
+  const users: User[] = [...(first.users ?? [])];
+  let skip = users.length;
+
+  while (skip < total) {
+    const page = await getUsers({ limit: batchSize, skip });
+    users.push(...(page.users ?? []));
+    skip += (page.users ?? []).length;
+    if ((page.users ?? []).length === 0) break;
+  }
+
+  return { users, total };
+}
+
 export async function getUserById(id: number) {
   return await requestJson<User>(`${BASE_URL}/users/${id}`);
 }

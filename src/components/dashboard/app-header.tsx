@@ -10,8 +10,8 @@ import { AppSidebar } from "@/components/dashboard/app-sidebar";
 
 export function AppHeader({ title }: { title?: string }) {
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/60">
-      <div className="mx-auto flex h-14 max-w-[1400px] items-center gap-3 px-4">
+    <header className="sticky top-0 z-40 border-b bg-background/75 backdrop-blur supports-backdrop-filter:bg-background/60">
+      <div className="mx-auto flex h-14 max-w-[1440px] items-center gap-3 px-4 sm:px-6 lg:px-8">
         <Sheet>
           <SheetTrigger asChild>
             <Button
@@ -23,14 +23,14 @@ export function AppHeader({ title }: { title?: string }) {
               <MenuIcon className="size-4" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="p-0">
-            <AppSidebar className="border-r-0" />
+          <SheetContent side="left" className="p-2">
+            <AppSidebar className="rounded-2xl border bg-card shadow-sm" />
           </SheetContent>
         </Sheet>
 
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <div className="min-w-0">
-            <div className="truncate text-sm font-semibold">
+            <div className="truncate text-sm font-semibold tracking-tight">
               {title ?? "Dashboard"}
             </div>
             <div className="truncate text-xs text-muted-foreground">

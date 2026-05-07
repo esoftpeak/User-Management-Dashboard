@@ -6,6 +6,7 @@ import {
   ArrowDownAZIcon,
   ArrowUpAZIcon,
   ArrowUpDownIcon,
+  ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   SortAscIcon,
@@ -22,6 +23,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -55,7 +62,7 @@ export function UsersTable({ users }: { users: User[] }) {
   const [sortDir, setSortDir] = React.useState<SortDir>("asc");
 
   const [page, setPage] = React.useState(1);
-  const pageSize = 10;
+  const [pageSize, setPageSize] = React.useState(10);
 
   const filtered = React.useMemo(() => {
     const q = debouncedQuery.trim().toLowerCase();
@@ -91,17 +98,44 @@ export function UsersTable({ users }: { users: User[] }) {
     return sorted.slice(start, start + pageSize);
   }, [safePage, sorted]);
 
+  const rangeStart = sorted.length === 0 ? 0 : (safePage - 1) * pageSize + 1;
+  const rangeEnd = Math.min(sorted.length, safePage * pageSize);
+
+  const pageNumbers = React.useMemo(() => {
+    const pages: Array<number | "ellipsis"> = [];
+    const add = (n: number | "ellipsis") => pages.push(n);
+    const total = totalPages;
+    const cur = safePage;
+    if (total <= 7) {
+      for (let i = 1; i <= total; i++) add(i);
+      return pages;
+    }
+    add(1);
+    if (cur > 4) add("ellipsis");
+    const start = Math.max(2, cur - 1);
+    const end = Math.min(total - 1, cur + 1);
+    for (let i = start; i <= end; i++) add(i);
+    if (cur < total - 3) add("ellipsis");
+    add(total);
+    return pages;
+  }, [safePage, totalPages]);
+
   const sortLabel =
     sortKey === "name" ? "Name" : sortKey === "age" ? "Age" : "Sort";
   const SortDirIcon = sortDir === "asc" ? SortAscIcon : SortDescIcon;
 
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <Card className="overflow-hidden shadow-sm">
+      <CardHeader className="flex flex-col gap-3 border-b bg-card/40 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <CardTitle className="text-base">Users</CardTitle>
+          <CardTitle className="text-base tracking-tight">Users</CardTitle>
           <div className="mt-1 text-sm text-muted-foreground">
-            {sorted.length} result{sorted.length === 1 ? "" : "s"}
+            {sorted.length} result{sorted.length === 1 ? "" : "s"}{" "}
+            {sorted.length ? (
+              <span className="text-muted-foreground/70">
+                • Showing {rangeStart}-{rangeEnd}
+              </span>
+            ) : null}
           </div>
         </div>
 
@@ -113,7 +147,7 @@ export function UsersTable({ users }: { users: User[] }) {
               setPage(1);
             }}
             placeholder="Search by name or email..."
-            className="sm:w-80"
+            className="h-9 sm:w-80"
           />
 
           <Button
@@ -122,7 +156,7 @@ export function UsersTable({ users }: { users: User[] }) {
               if (sortKey === "name") setSortKey("age");
               else setSortKey("name");
             }}
-            className="justify-between gap-2"
+            className="h-9 justify-between gap-2"
           >
             <span className="inline-flex items-center gap-2">
               <ArrowUpDownIcon className="size-4" />
@@ -134,7 +168,7 @@ export function UsersTable({ users }: { users: User[] }) {
           <Button
             variant="outline"
             onClick={() => setSortDir((d) => (d === "asc" ? "desc" : "asc"))}
-            className="gap-2"
+            className="h-9 gap-2"
           >
             <SortDirIcon className="size-4" />
             <span className="hidden sm:inline">
@@ -159,11 +193,11 @@ export function UsersTable({ users }: { users: User[] }) {
         ) : (
           <>
             <div className="hidden md:block">
-              <div className="max-h-[70dvh] overflow-auto">
-                <Table>
-                  <TableHeader className="sticky top-0 z-10 bg-card/90 backdrop-blur supports-backdrop-filter:bg-card/70">
+              <div className="w-full">
+                <Table className="w-full">
+                  <TableHeader className="bg-card/95 backdrop-blur supports-backdrop-filter:bg-card/80">
                     <TableRow>
-                      <TableHead className="w-[280px]">
+                      <TableHead className="w-[320px]">
                         <button
                           className="inline-flex items-center gap-1 font-medium"
                           onClick={() => {
@@ -183,8 +217,8 @@ export function UsersTable({ users }: { users: User[] }) {
                           ) : null}
                         </button>
                       </TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Phone</TableHead>
+                      <TableHead className="w-[340px]">Email</TableHead>
+                      <TableHead className="w-[200px]">Phone</TableHead>
                       <TableHead className="w-[90px] text-right">
                         <button
                           className="inline-flex items-center justify-end gap-1 font-medium"
@@ -202,9 +236,9 @@ export function UsersTable({ users }: { users: User[] }) {
                         </button>
                       </TableHead>
                       <TableHead className="w-[110px]">Gender</TableHead>
-                      <TableHead>Company</TableHead>
-                      <TableHead>City</TableHead>
-                      <TableHead className="w-[140px]">Role</TableHead>
+                      <TableHead className="w-[260px]">Company</TableHead>
+                      <TableHead className="w-[200px]">City</TableHead>
+                      <TableHead className="w-[240px]">Role</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -214,7 +248,7 @@ export function UsersTable({ users }: { users: User[] }) {
                       return (
                         <TableRow
                           key={u.id}
-                          className="transition-colors hover:bg-muted/50"
+                          className="transition-colors duration-200 hover:bg-muted/40"
                         >
                           <TableCell>
                             <Link
@@ -236,10 +270,10 @@ export function UsersTable({ users }: { users: User[] }) {
                             </Link>
                           </TableCell>
                           <TableCell className="text-muted-foreground">
-                            {u.email}
+                            <span className="block truncate">{u.email}</span>
                           </TableCell>
                           <TableCell className="text-muted-foreground">
-                            {u.phone}
+                            <span className="block truncate">{u.phone}</span>
                           </TableCell>
                           <TableCell className="text-right tabular-nums">
                             {u.age}
@@ -250,13 +284,17 @@ export function UsersTable({ users }: { users: User[] }) {
                             </Badge>
                           </TableCell>
                           <TableCell className="text-muted-foreground">
-                            {u.company?.name ?? "—"}
+                            <span className="block truncate">
+                              {u.company?.name ?? "—"}
+                            </span>
                           </TableCell>
                           <TableCell className="text-muted-foreground">
-                            {u.address?.city ?? "—"}
+                            <span className="block truncate">
+                              {u.address?.city ?? "—"}
+                            </span>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="truncate">
+                            <Badge variant="outline" className="max-w-full truncate">
                               {role}
                             </Badge>
                           </TableCell>
@@ -327,13 +365,46 @@ export function UsersTable({ users }: { users: User[] }) {
               })}
             </div>
 
-            <div className="flex items-center justify-between gap-2 border-t px-4 py-3">
+            <div className="flex flex-col gap-3 border-t px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-xs text-muted-foreground">
-                Page <span className="font-medium text-foreground">{safePage}</span>{" "}
-                of <span className="font-medium text-foreground">{totalPages}</span>
+                <span className="font-medium text-foreground">
+                  {rangeStart}-{rangeEnd}
+                </span>{" "}
+                of <span className="font-medium text-foreground">{sorted.length}</span>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-2 sm:justify-end">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="h-8 gap-2">
+                      <span className="tabular-nums">{pageSize}</span>/page
+                      <ChevronDownIcon className="size-4 opacity-70" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {[10, 20, 50].map((n) => (
+                      <DropdownMenuItem
+                        key={n}
+                        onClick={() => {
+                          setPageSize(n);
+                          setPage(1);
+                        }}
+                      >
+                        {n} / page
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setPage(1)}
+                  disabled={safePage <= 1}
+                  aria-label="First page"
+                >
+                  <span className="text-xs">«</span>
+                </Button>
                 <Button
                   variant="outline"
                   size="icon"
@@ -343,6 +414,30 @@ export function UsersTable({ users }: { users: User[] }) {
                 >
                   <ChevronLeftIcon className="size-4" />
                 </Button>
+
+                <div className="hidden items-center gap-1 sm:flex">
+                  {pageNumbers.map((p, idx) =>
+                    p === "ellipsis" ? (
+                      <div
+                        key={`e-${idx}`}
+                        className="px-2 text-xs text-muted-foreground"
+                      >
+                        …
+                      </div>
+                    ) : (
+                      <Button
+                        key={p}
+                        variant={p === safePage ? "default" : "outline"}
+                        size="icon"
+                        className={cn("h-8 w-8", p === safePage && "pointer-events-none")}
+                        onClick={() => setPage(p)}
+                        aria-label={`Page ${p}`}
+                      >
+                        <span className="text-xs tabular-nums">{p}</span>
+                      </Button>
+                    )
+                  )}
+                </div>
                 <Button
                   variant="outline"
                   size="icon"
@@ -351,6 +446,15 @@ export function UsersTable({ users }: { users: User[] }) {
                   aria-label="Next page"
                 >
                   <ChevronRightIcon className="size-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setPage(totalPages)}
+                  disabled={safePage >= totalPages}
+                  aria-label="Last page"
+                >
+                  <span className="text-xs">»</span>
                 </Button>
               </div>
             </div>

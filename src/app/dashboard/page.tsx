@@ -5,10 +5,10 @@ import { StatCard } from "@/components/dashboard/stat-card";
 import { ApiErrorState } from "@/components/users/api-error-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getUsers } from "@/services/users";
+import { getAllUsers } from "@/services/users";
 
 export default async function DashboardPage() {
-  const data = await getUsers({ limit: 100 }).catch(() => null);
+  const data = await getAllUsers({ batchSize: 100 }).catch(() => null);
   if (!data) {
     return <ApiErrorState />;
   }
@@ -28,15 +28,15 @@ export default async function DashboardPage() {
         );
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-xl font-semibold tracking-tight">Overview</h1>
-        <p className="text-sm text-muted-foreground">
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-2xl font-semibold tracking-tight">Overview</h1>
+        <p className="max-w-2xl text-sm text-muted-foreground">
           High-level metrics and a quick entry point to user management.
         </p>
       </div>
 
-      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total users"
           value={String(total)}
@@ -62,9 +62,9 @@ export default async function DashboardPage() {
         />
       </section>
 
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader className="flex-row items-center justify-between gap-3 space-y-0">
-          <CardTitle className="text-base">Users</CardTitle>
+          <CardTitle className="text-base tracking-tight">Users</CardTitle>
           <Button asChild variant="outline">
             <Link href="/dashboard/users">Open users</Link>
           </Button>
