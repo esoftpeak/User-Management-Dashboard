@@ -1,36 +1,133 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# User Management System Dashboard
+
+A modern, portfolio-quality **User Management System** dashboard built with **Next.js App Router**, **TypeScript**, **Tailwind CSS**, and **shadcn/ui**. It consumes the public API at `https://dummyjson.com/users` and showcases production-ready UI patterns: responsive sidebar layout, searchable/sortable/paginated users table, skeleton loading, empty states, and rich user details.
+
+## Tech Stack
+
+- **Framework**: Next.js (App Router)
+- **UI**: shadcn/ui (Radix UI primitives)
+- **Styling**: Tailwind CSS
+- **Language**: TypeScript
+- **Theme**: `next-themes` (dark/light/system)
+- **Icons**: Lucide
+
+## Features
+
+- **Dashboard shell**
+  - Modern sidebar navigation
+  - Sticky top header
+  - Mobile drawer navigation using `Sheet`
+  - Dark/light/system theme toggle
+
+- **Users list**
+  - Fetch users from DummyJSON
+  - Search by name/email (debounced)
+  - Sort by name and age
+  - Client-side pagination
+  - Responsive: table on desktop, cards on mobile
+  - Sticky table header
+  - Empty results state
+
+- **User details**
+  - Dedicated details page per user
+  - Clean card-based sections
+  - Address, company, education, hair/eye/blood info, crypto, bank details
+
+- **Quality**
+  - Strong TypeScript models
+  - Reusable components (layout + user UI)
+  - Simple, maintainable folder structure
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 20+
+- npm (or your preferred package manager)
+
+### Install
+
+```bash
+npm install
+```
+
+### Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `http://localhost:3000`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Note: the dev server is configured to bind to `0.0.0.0:3000` for VPN/network-adapter friendliness.
 
-## Learn More
+### Production build
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run build
+npm run start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Folder Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```txt
+src/
+  app/
+    dashboard/
+      page.tsx
+      layout.tsx
+      users/
+        page.tsx
+        [id]/
+          page.tsx
+          not-found.tsx
+  components/
+    dashboard/
+      app-header.tsx
+      app-sidebar.tsx
+      mode-toggle.tsx
+      nav-items.ts
+      stat-card.tsx
+    users/
+      user-detail-section.tsx
+      users-empty-state.tsx
+      users-skeleton.tsx
+      users-table.tsx
+    ui/
+      ...shadcn components
+    theme-provider.tsx
+  hooks/
+    use-debounced-value.ts
+  services/
+    users.ts
+  types/
+    dummyjson.ts
+    user.ts
+  lib/
+    utils.ts
+```
 
-## Deploy on Vercel
+## Design Decisions (Why this architecture)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **App Router + server components**: pages fetch data server-side and pass it to focused client components for interactivity (search/sort/pagination).
+- **Separation of concerns**:
+  - `services/` handles API access
+  - `types/` defines the contract
+  - `components/` focuses on UI composition and reusability
+- **Mobile-first UX**: cards on mobile, table on desktop, and a sidebar drawer for small screens.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Screenshots
+
+- Dashboard overview: _(add screenshot here)_
+- Users list: _(add screenshot here)_
+- User details: _(add screenshot here)_
+
+## Future Improvements
+
+- Add URL-synced table state (query/sort/page) for shareable views
+- Add virtualization for very large user lists
+- Add filters (gender, age range, department)
+- Add optimistic UI mutations (edit user, activate/deactivate)
+- Add tests (Playwright + component tests)
