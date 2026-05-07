@@ -218,7 +218,9 @@ export function UsersTable({ users }: { users: User[] }) {
                         </button>
                       </TableHead>
                       <TableHead className="w-[340px]">Email</TableHead>
-                      <TableHead className="w-[200px]">Phone</TableHead>
+                      <TableHead className="hidden xl:table-cell w-[200px]">
+                        Phone
+                      </TableHead>
                       <TableHead className="w-[90px] text-right">
                         <button
                           className="inline-flex items-center justify-end gap-1 font-medium"
@@ -236,9 +238,15 @@ export function UsersTable({ users }: { users: User[] }) {
                         </button>
                       </TableHead>
                       <TableHead className="w-[110px]">Gender</TableHead>
-                      <TableHead className="w-[260px]">Company</TableHead>
-                      <TableHead className="w-[200px]">City</TableHead>
-                      <TableHead className="w-[240px]">Role</TableHead>
+                      <TableHead className="hidden lg:table-cell w-[260px]">
+                        Company
+                      </TableHead>
+                      <TableHead className="hidden xl:table-cell w-[200px]">
+                        City
+                      </TableHead>
+                      <TableHead className="hidden lg:table-cell w-[240px]">
+                        Role
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -272,7 +280,7 @@ export function UsersTable({ users }: { users: User[] }) {
                           <TableCell className="text-muted-foreground">
                             <span className="block truncate">{u.email}</span>
                           </TableCell>
-                          <TableCell className="text-muted-foreground">
+                          <TableCell className="hidden xl:table-cell text-muted-foreground">
                             <span className="block truncate">{u.phone}</span>
                           </TableCell>
                           <TableCell className="text-right tabular-nums">
@@ -283,17 +291,17 @@ export function UsersTable({ users }: { users: User[] }) {
                               {u.gender}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-muted-foreground">
+                          <TableCell className="hidden lg:table-cell text-muted-foreground">
                             <span className="block truncate">
                               {u.company?.name ?? "—"}
                             </span>
                           </TableCell>
-                          <TableCell className="text-muted-foreground">
+                          <TableCell className="hidden xl:table-cell text-muted-foreground">
                             <span className="block truncate">
                               {u.address?.city ?? "—"}
                             </span>
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="hidden lg:table-cell">
                             <Badge variant="outline" className="max-w-full truncate">
                               {role}
                             </Badge>

@@ -1,49 +1,77 @@
 # User Management System Dashboard
 
-A modern, portfolio-quality **User Management System** dashboard built with **Next.js App Router**, **TypeScript**, **Tailwind CSS**, and **shadcn/ui**. It consumes the public API at `https://dummyjson.com/users` and showcases production-ready UI patterns: responsive sidebar layout, searchable/sortable/paginated users table, skeleton loading, empty states, and rich user details.
+Portfolio-quality **User Management System** built with **Next.js App Router**, **TypeScript**, **Tailwind CSS**, and **shadcn/ui**. It fetches users from DummyJSON and focuses on real SaaS dashboard UX: responsive layout, searchable/sortable/paginated user directory, rich profile details, skeleton loading, and error/empty states.
 
-## Tech Stack
+## Live Demo
 
-- **Framework**: Next.js (App Router)
-- **UI**: shadcn/ui (Radix UI primitives)
-- **Styling**: Tailwind CSS
-- **Language**: TypeScript
-- **Theme**: `next-themes` (dark/light/system)
-- **Icons**: Lucide
+- **Online**: `https://modern-user-management-dashboard-wi.vercel.app/`
 
-## Features
+### Demo Video
 
-- **Dashboard shell**
-  - Modern sidebar navigation
-  - Sticky top header
-  - Mobile drawer navigation using `Sheet`
-  - Dark/light/system theme toggle
+<video src="https://github.com/user-attachments/assets/878c0f7e-c84f-4768-8f19-af6d1011674d" controls muted playsinline style="max-width: 100%; border-radius: 12px;"></video>
 
-- **Users list**
-  - Fetch users from DummyJSON
-  - Search by name/email (debounced)
-  - Sort by name and age
-  - Client-side pagination
-  - Responsive: table on desktop, cards on mobile
-  - Sticky table header
-  - Empty results state
+If the video doesn’t render in your Markdown viewer, open it here: `https://github.com/user-attachments/assets/878c0f7e-c84f-4768-8f19-af6d1011674d`
 
-- **User details**
-  - Dedicated details page per user
-  - Clean card-based sections
-  - Address, company, education, hair/eye/blood info, crypto, bank details
+## Tech Stack (and why)
 
-- **Quality**
-  - Strong TypeScript models
-  - Reusable components (layout + user UI)
-  - Simple, maintainable folder structure
+- **Next.js (App Router)**: Server Components + nested layouts provide fast initial loads and a clean routing architecture for dashboards.
+- **React + TypeScript**: Strong typing for API contracts + safer refactors for scalable UI.
+- **Tailwind CSS**: Design-system friendly styling with consistent spacing, typography, and responsive utilities.
+- **shadcn/ui (Radix primitives)**: Accessible, composable components with full styling control (no heavy UI framework lock-in).
+- **next-themes**: Dark/light/system theme switching with minimal code.
+- **Lucide**: Consistent icon set that matches modern admin UI patterns.
+
+## Core Features
+
+### Dashboard layout
+
+- Sidebar navigation with selected state
+- Sticky top header
+- Mobile drawer navigation (`Sheet`)
+- Dark/light/system toggle
+
+### Dashboard overview
+
+- Stat cards:
+  - Total users
+  - Male users
+  - Female users
+  - Average age
+
+### Users directory
+
+- Data source: `https://dummyjson.com/users` (all users fetched via pagination)
+- Search (debounced): name + email
+- Sorting: name + age
+- Pagination: page numbers, first/last, page size
+- Responsive presentation:
+  - Table on desktop
+  - Cards on mobile
+- Empty results state
+
+### User details
+
+`/dashboard/users/[id]` shows a clean card-based profile:
+
+- Identity + contact
+- Address and company details
+- University, birth date, blood group, eye/hair info
+- Crypto + bank info
+
+### Loading, empty, and error states
+
+- **Skeleton screens (App Router route-level)**:
+  - `src/app/dashboard/loading.tsx`
+  - `src/app/dashboard/users/loading.tsx`
+- Empty state for search results
+- Graceful API error state if the network/VPN blocks requests
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 20+
-- npm (or your preferred package manager)
+- npm
 
 ### Install
 
@@ -51,35 +79,35 @@ A modern, portfolio-quality **User Management System** dashboard built with **Ne
 npm install
 ```
 
-### Development
+### Run locally
 
 ```bash
 npm run dev
 ```
 
-Then open:
+Open `http://localhost:3000`.
 
-- `http://localhost:3000`
+Note: the dev server binds to `0.0.0.0:3000` to be VPN/network-adapter friendly.
 
-Note: the dev server is configured to bind to `0.0.0.0:3000` for VPN/network-adapter friendliness.
-
-### Production build
+### Build & start production
 
 ```bash
 npm run build
 npm run start
 ```
 
-## Folder Structure
+## Architecture / Folder Structure
 
 ```txt
 src/
   app/
     dashboard/
-      page.tsx
       layout.tsx
+      page.tsx
+      loading.tsx
       users/
         page.tsx
+        loading.tsx
         [id]/
           page.tsx
           not-found.tsx
@@ -91,6 +119,7 @@ src/
       nav-items.ts
       stat-card.tsx
     users/
+      api-error-state.tsx
       user-detail-section.tsx
       users-empty-state.tsx
       users-skeleton.tsx
@@ -109,25 +138,25 @@ src/
     utils.ts
 ```
 
-## Design Decisions (Why this architecture)
+## Design Decisions
 
-- **App Router + server components**: pages fetch data server-side and pass it to focused client components for interactivity (search/sort/pagination).
+- **Server-first data fetching**: pages fetch data server-side and pass it to focused client components for interactivity (search/sort/pagination), keeping UI snappy and code easy to reason about.
 - **Separation of concerns**:
-  - `services/` handles API access
-  - `types/` defines the contract
-  - `components/` focuses on UI composition and reusability
-- **Mobile-first UX**: cards on mobile, table on desktop, and a sidebar drawer for small screens.
+  - `services/` for API calls (server-only)
+  - `types/` for API models and helpers
+  - `components/` for reusable UI building blocks
+- **Mobile-first UX**: cards on small screens, table on larger screens, sidebar drawer for mobile navigation.
 
 ## Screenshots
 
 - Dashboard overview: _(add screenshot here)_
-- Users list: _(add screenshot here)_
+- Users directory: _(add screenshot here)_
 - User details: _(add screenshot here)_
 
 ## Future Improvements
 
-- Add URL-synced table state (query/sort/page) for shareable views
-- Add virtualization for very large user lists
-- Add filters (gender, age range, department)
-- Add optimistic UI mutations (edit user, activate/deactivate)
-- Add tests (Playwright + component tests)
+- URL-synced table state (query/sort/page) for shareable views
+- Filters (gender, age range, department)
+- Virtualized table for very large datasets
+- Editing workflows (activate/deactivate, inline edits) with optimistic UI
+- Tests (Playwright + component tests)

@@ -5,7 +5,13 @@ import { MenuIcon } from "lucide-react";
 
 import { ModeToggle } from "@/components/dashboard/mode-toggle";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 
 export function AppHeader({ title }: { title?: string }) {
@@ -24,6 +30,9 @@ export function AppHeader({ title }: { title?: string }) {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="p-2">
+            <SheetHeader className="sr-only">
+              <SheetTitle>Navigation</SheetTitle>
+            </SheetHeader>
             <AppSidebar className="rounded-2xl border bg-card shadow-sm" />
           </SheetContent>
         </Sheet>
